@@ -1,3 +1,9 @@
 *DS_Store
-
+*.dSYM
+Assignments/C/part1
+Assignments/C/part2
+Assignments/C/part3
+examplecode/.DS_Store
+.DS_Store
+*.json
 examplecode/racket/higherorderfunctions.bak
