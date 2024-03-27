@@ -62,14 +62,13 @@ def function(tok):
   tok = lexer.token()
   # insert your code here
 
-
 def myif(tok):
   tok = lexer.token()
   tok = expression(tok)
   tok = relop(tok)
   tok = expression(tok)
   if tok.type != "THEN":
-    tokerror(tok, "THEN")
+    tokerror(tok,"THEN")
   tok = lexer.token()
   tok = statement(tok)
   return tok
@@ -78,18 +77,15 @@ def relop(tok):
   if tok.type == "LESS":
     tok = lexer.token()
     if tok.type == "GREATER" or tok.type == "EQUALS":
-      tok = lexer.token() # get the next token since the token we just consumes was apart of the relop
+      tok = lexer.token() # grab the nextra token since the token we just "consumed" (i.e., checked) was part of the relop
   elif tok.type == "GREATER":
     tok = lexer.token()
     if tok.type == "LESS" or tok.type == "EQUALS":
-      tok = lexer.token() # get the next token since the token we just consumes was apart of the relop
-    tok = lexer.token()
+      tok = lexer.token() # grab the nextra token since the token we just "consumed" (i.e., checked) was part of the relop
   elif tok.type == "EQUALS":
-    tok = lexer.token() # nothing to check for here, just get the next token
+    tok = lexer.token() # nothing to check for here so we need to grab an extra token in order to return an "extra" token
   else:
     tokerror(tok, "LESS, GREATER, EQUALS")
-  tok = lexer.token()
-  
   return tok
 
 def gosub(tok):
