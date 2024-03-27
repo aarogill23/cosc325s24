@@ -1,5 +1,6 @@
 # PART 2 solution - recursive descent top-down parser by hand
 from lexicalanalysis import build_the_lexer
+from statements import *
 lexer = build_the_lexer()
 
 # define all the non terminal parsing functions
@@ -9,6 +10,7 @@ def tokerror(tok, exp):
   exit(1)
 
 def program(tok):
+  print(len(statements))
   actual_statement(tok)
   tok = lexer.token()
   while tok is not None:
@@ -19,6 +21,7 @@ def program(tok):
 def actual_statement(tok):
   if tok.type != "NUMBER":
     tokerror(tok, "NUMBER")
+  linenum = tok.value
   tok = statement(lexer.token())
   if tok is None:
     print("EOF wihthout a newline character at the end")
@@ -30,6 +33,7 @@ def actual_statement(tok):
 def statement(tok):
   # look for a statement
   if tok.type == "PRINT":
+    stmt = PrintStatement(linenum)
     tok = myprint(tok)
   elif tok.type == "INPUT":
     tok = myinput(tok)
@@ -154,4 +158,5 @@ def factor(tok):
 thesourcecode = open("examplecode/tb/printsonly.tb", "r")
 #lexer.input("A=3\nB=4\nPRINT A+B")
 lexer.input(thesourcecode.read())
+statements = []
 program(lexer.token())
