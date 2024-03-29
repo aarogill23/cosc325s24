@@ -50,26 +50,16 @@ def statement(tok, linenum):
     tok = gosub(tok)
   elif tok.type == "IF":
     statements.append(IfStatement(linenum))
-    myif(tok, linenum)
-    tok = lexer.token()
+    tok = myif(tok, linenum)
   elif tok.type == "END":
     tok = lexer.token()
   elif tok.type == "RETURN":
     tok = lexer.token()
-  elif tok.type == "RND":
-    statements.append(RndStatement(linenum))
-    function(tok)
-    tok = lexer.token()
-  elif tok.type == "USR":
-    statements.append(UsrStatement(linenum))
-    function(tok)
-    tok = lexer.token()
   elif tok.type == "REM":
     statements.append(RemStatement(linenum))
-    tok = lexer.token() 
+    tok = lexer.token()
   else:
     tokerror(tok, "PRINT, INPUT, RETURN, END, ...")
-  statements.append(statement)
   return tok
 
 
@@ -172,8 +162,10 @@ def term(tok):
   return tok
 
 def factor(tok):
-  if tok.ytpe != "RND" and tok.type != "USR" and tok.type != "VAR" and tok.type != "NUMBER" and tok.type != "LPAREN":
-    tokerror(tok,  "RND, USR, VAR, NUMBER, LPAREN")
+  if tok.type != "RND" and tok.type != "USR" and tok.type != "VAR" and tok.type != "NUMBER" and tok.type != "LPAREN":
+    tokerror(tok, "RND, USR, VAR, NUMBER, LPAREN")
+  if tok.type == "RND" or tok.type == "USR":
+    function(tok)
   if tok.type == "LPAREN":
     tok = lexer.token()
     tok = expression(tok)
@@ -187,6 +179,7 @@ lexer.input(thesourcecode.read())
 statements = []
 program(lexer.token())
 
+# by this point, statements should be fully populated
 for stmt in statements:
   print(f"Executing {stmt} at line # {stmt._linenumber}")
-  stmt
+  stmt.execute()
