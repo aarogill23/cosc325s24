@@ -11,4 +11,5 @@ examplecode/racket/higherorderfunctions.bak
 .DS_Store
 Assignments/.DS_Store
 examplecode/.DS_Store
-.orig
+*.orig
+*.pyc
