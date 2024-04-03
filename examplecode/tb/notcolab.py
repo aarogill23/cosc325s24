@@ -162,7 +162,8 @@ def term(tok):
   return tok
 
 def factor(tok):
-  if tok.type != "RND" and tok.type != "USR" and tok.type != "VAR" and tok.type != "NUMBER" and tok.type != "LPAREN":
+  if tok.type != "RND" and tok.type != "USR" and tok.type != "VAR" \
+   and tok.type != "NUMBER" and tok.type != "LPAREN":
     tokerror(tok, "RND, USR, VAR, NUMBER, LPAREN")
   if tok.type == "RND" or tok.type == "USR":
     function(tok)
@@ -173,7 +174,7 @@ def factor(tok):
       tokerror(tok, "RPAREN")
 
 # now, open a program and parse it
-thesourcecode = open("/Users/aaron/Documents/GitHub/cosc325s24/examplecode/tb/ifsonly.tb", "r")
+thesourcecode = open("/Users/aaron/Documents/GitHub/cosc325s24/examplecode/tb/hexdump.tb", "r")
 #lexer.input("A=3\nB=4\nPRINT A+B")
 lexer.input(thesourcecode.read())
 statements = []
