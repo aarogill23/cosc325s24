@@ -107,7 +107,16 @@ def goto(tok):
 
 def let(tok):
   tok = lexer.token()
-  # insert your code here
+  if tok.type != "VAR":
+    tokerror(tok, "VAR")
+  tok = lexer.token()
+  if tok.type != "EQUALS":
+    tokerror(tok, "EQUALS")
+  tok = lexer.token()
+  if tok.type == "MINUS":
+    tok = lexer.token()
+  while tok is not None and (tok.type == "NUMBER"):
+    tok = lexer.token()
 
 def myinput(tok):
   tok = var_list(lexer.token())
