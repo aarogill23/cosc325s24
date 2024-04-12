@@ -6,7 +6,7 @@ lexer = build_the_lexer()
 
 # define all the non terminal parsing functions
 def tokerror(tok, exp):
-  print(f"Unexpected token found: {tok.type}, Expecting: {exp}")
+  print(f"Unexpected token found: {tok.type}, Expecting: {exp} on LINE {tok.lineno}")
   print("INVALID")
   exit(1)
 
@@ -113,10 +113,8 @@ def let(tok):
   if tok.type != "EQUALS":
     tokerror(tok, "EQUALS")
   tok = lexer.token()
-  if tok.type == "MINUS":
-    tok = lexer.token()
-  while tok is not None and (tok.type == "NUMBER"):
-    tok = lexer.token()
+  tok = expression(tok)
+  return tok  
 
 def myinput(tok):
   tok = var_list(lexer.token())
@@ -134,7 +132,11 @@ def expr_list(tok):
   else:
     tok = lexer.token()
   while tok is not None and (tok.type == "COMMA" or tok.type == "SEMICOLON"):
-    tok = expression(lexer.token())
+    tok = lexer.token()
+    if tok.type != "STRING":
+      tok = expression(tok)
+    else:
+      tok = lexer.token()
   return tok
 
 def var_list(tok):
@@ -166,8 +168,6 @@ def term(tok):
     tok = lexer.token()
     if tok is None or tok.type == "NEWLINE":
       break
-    else:
-      print("uhoh")
   return tok
 
 def factor(tok):
