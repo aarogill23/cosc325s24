@@ -3,76 +3,103 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class eclipseAssignment extends JFrame {
+public class eclipseAssignment extends JPanel implements ActionListener {
+    private static final int WIDTH = 800;
+    private static final int HEIGHT = 600;
+    private static final int SUN_RADIUS = 30;
+    private static final int EARTH_RADIUS = 10;
+    private static final int MOON_RADIUS = 5;
+    private static final double EARTH_ORBIT_RADIUS = 150;
+    private static final double MOON_ORBIT_RADIUS = 50;
+    private static final double EARTH_ORBIT_SPEED = (0.01); // radians per frame
+    private static final double MOON_ORBIT_SPEED = 0.03;
+
+    private double earthAngle = 0;
+    private double moonAngle = 0;
+    private int dayCounter = 0;
+    private boolean isPlaying = false;
     private Timer timer;
-    private int dayCounter;
 
     public eclipseAssignment() {
-        setTitle("Orbit Simulation");
-        setSize(800, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
+        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        timer = new Timer(20, this);
 
-        JPanel controlPanel = new JPanel();
         JButton playButton = new JButton("Play");
         JButton pauseButton = new JButton("Pause");
         JButton stepButton = new JButton("Step");
-        JLabel dayLabel = new JLabel("Day: 0");
 
-        playButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                timer.start();
+        playButton.addActionListener(e -> {
+            isPlaying = true;
+            timer.start();
+        });
+
+        pauseButton.addActionListener(e -> {
+            isPlaying = false;
+            timer.stop();
+        });
+
+        stepButton.addActionListener(e -> {
+            if (!isPlaying) {
+                stepSimulation();
             }
         });
 
-        pauseButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                timer.stop();
-            }
-        });
-
-        stepButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                simulateOneDay();
-            }
-        });
-
-        controlPanel.add(playButton);
-        controlPanel.add(pauseButton);
-        controlPanel.add(stepButton);
-        controlPanel.add(dayLabel);
-
-        add(controlPanel, BorderLayout.SOUTH);
-
-        timer = new Timer(100, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                simulateOneDay();
-            }
-        });
-
-        setVisible(true);
+        add(playButton);
+        add(pauseButton);
+        add(stepButton);
     }
 
-    private void simulateOneDay() {
-        // Perform simulation logic here
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        // Draw Sun
+        g.setColor(Color.YELLOW);
+        g.fillOval(WIDTH / 2 - SUN_RADIUS, HEIGHT / 2 - SUN_RADIUS, SUN_RADIUS * 2, SUN_RADIUS * 2);
 
-        // Increment day counter
+        // Draw Earth
+        int earthX = (int) (WIDTH / 2 + EARTH_ORBIT_RADIUS * Math.cos(earthAngle) - EARTH_RADIUS);
+        int earthY = (int) (HEIGHT / 2 + EARTH_ORBIT_RADIUS * Math.sin(earthAngle) - EARTH_RADIUS);
+        g.setColor(Color.BLUE);
+        g.fillOval(earthX, earthY, EARTH_RADIUS * 2, EARTH_RADIUS * 2);
+
+        // Draw Moon
+        int moonX = (int) (earthX + MOON_ORBIT_RADIUS * Math.cos(moonAngle) - MOON_RADIUS);
+        int moonY = (int) (earthY + MOON_ORBIT_RADIUS * Math.sin(moonAngle) - MOON_RADIUS);
+        g.setColor(Color.GRAY);
+        g.fillOval(moonX, moonY, MOON_RADIUS * 2, MOON_RADIUS * 2);
+
+        // Draw day counter
+        g.setColor(Color.BLACK);
+        g.drawString("Day: " + dayCounter, 10, 20);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (isPlaying) {
+            updateSimulation();
+            repaint();
+        }
+    }
+
+    private void updateSimulation() {
+        earthAngle += EARTH_ORBIT_SPEED;
+        moonAngle += MOON_ORBIT_SPEED;
         dayCounter++;
+    }
 
-        // Update day label
-        // dayLabel.setText("Day: " + dayCounter);
+    private void stepSimulation() {
+        updateSimulation();
+        repaint();
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new eclipseAssignment();
-            }
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("Orbit Simulation");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.getContentPane().add(new eclipseAssignment(), BorderLayout.CENTER);
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
         });
     }
 }
