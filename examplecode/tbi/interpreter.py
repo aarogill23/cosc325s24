@@ -213,7 +213,7 @@ def p_error(p):
 
 import ply.lex as lex
 lexer = lex.lex()
-thesourcecode = open("examplecode/tbi/random.tb", "r")
+thesourcecode = open("hexdump.tb", "r")
 import ply.yacc as yacc 
 parser = yacc.yacc()
 program = parser.parse(thesourcecode.read())
